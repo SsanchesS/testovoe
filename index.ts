@@ -11,8 +11,8 @@ const random_list=(min=-100, max=100, lengthMas = Math.floor(Math.random() * (10
 
 const mySort=(list:number[])=>{
 
-   const sortAlgoritm1 = (list:number[])=>{
-      console.log("Выбран алгоритм: Пузырьковая сортировка")
+   const bubbleSort = (list:number[])=>{
+
       for (let i=0; i<list.length; i++){
          let isSwap = false
          for (let j=0; j<list.length -1 -i; j++){
@@ -28,13 +28,23 @@ const mySort=(list:number[])=>{
       return list
    }
 
-   const sortAlgoritm2 = (list:number[])=>{
-      console.log("Выбран алгоритм: Быстрая сортировка")
-      
-      return list
+   const quickSort = (list:number[]):number[]=>{ 
+
+      if (list.length <= 1) return list
+
+      const pivot = list[Math.floor(list.length/2)]
+      const left = []
+      const right = []
+
+      for (const el of list) {
+         if (el < pivot) left.push(el)
+         else if (el > pivot) right.push(el)
+         else continue
+      }
+      return quickSort(left).concat(pivot, quickSort(right))
    }
 
-   const sortAlgoritmList = [sortAlgoritm1,sortAlgoritm2]
+   const sortAlgoritmList = [bubbleSort,quickSort]
 
    const sortAlgoritm = sortAlgoritmList[Math.floor(Math.random() * (1-0+1)+0)]
    const sortedList = sortAlgoritm(list)
@@ -46,14 +56,14 @@ const mySort=(list:number[])=>{
 const send = async (sortedList:number[])=>{
    const sortedList_json = JSON.stringify(sortedList)
    try {
-      console.log("Успех: ", sortedList_json)
-      // await fetch(API_URL,{
-      //    method: "POST",
-      //    headers: { 'postman-token': API_KEY },
-      //    body: sortedList_json
-      // })
-      // .then(res=>res.json())
-      // .then(data=>console.log("Успех: ", data))
+      await fetch(API_URL,{
+         method: "POST",
+         // headers: { 'postman-token': API_KEY },
+         headers: {"Content-Type": "application/json"},
+         body: sortedList_json
+      })
+      .then(res=>res.json())
+      .then(data=>console.log("Успех: ", data))
    } catch (error) {
       console.log("Ошибка: ", error)
    }
